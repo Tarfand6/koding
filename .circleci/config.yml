@@ -17,4 +17,50 @@ workflows:
 
     jobs:
 
+      - dependencies
+
 jobs:
+
+  dependencies:
+
+    <<: *defaults
+
+    steps:
+
+      - checkout
+
+      - run: scripts/check_package_json_constraints.sh
+
+      - restore_cache:
+          keys:
+            - node_modules-{{ checksum "package.json" }}
+      - restore_cache:
+          keys:
+            - client-node_modules-{{ checksum "client/package.json" }}
+      - restore_cache:
+          keys:
+            - landing-node_modules-{{ checksum "client/landing/package.json" }}
+
+      - run:
+          name: npm install
+          command: npm install --unsafe-perm
+
+      - save_cache:
+          key: node_modules-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - save_cache:
+          key: client-node_modules-{{ checksum "client/package.json" }}
+          paths:
+            - client/node_modules
+      - save_cache:
+          key: landing-node_modules-{{ checksum "client/landing/package.json" }}
+          paths:
+            - client/landing/node_modules
+
+      - persist_to_workspace:
+          root: /koding
+          paths:
+            - node_modules
+            - client/node_modules
+            - client/landing/node_modules
