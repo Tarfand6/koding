@@ -137,6 +137,14 @@ jobs:
             - go-{{ .Branch }}
             - go-master
 
+      - run:
+          name: touch files restored from cache
+          working_directory: ~/koding/go
+          command: |
+            timestamp=$(date --date="@$(($(date +%s) + 300))" +%m%d%H%M)
+            find bin -exec touch {} -t $timestamp \;
+            find pkg -exec touch {} -t $timestamp \;
+
       - run: env GOGC=10 go/build.sh
 
       - save_cache:
