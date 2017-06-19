@@ -137,6 +137,13 @@ jobs:
             - go-{{ .Branch }}
             - go-master
 
+      - run:
+          name: touch files restored from cache
+          working_directory: ~/koding/go
+          command: |
+            find bin -exec touch {} \;
+            find pkg -exec touch {} \;
+
       - run: env GOGC=10 go/build.sh
 
       - save_cache:
