@@ -145,7 +145,15 @@ jobs:
             find bin -exec touch {} -t $timestamp \;
             find pkg -exec touch {} -t $timestamp \;
 
+      - run:
+          working_directory: ~/koding/go
+          command: ls -l --recursive bin pkg
+
       - run: env GOGC=10 go/build.sh
+
+      - run:
+          working_directory: ~/koding/go
+          command: ls -l --recursive
 
       - save_cache:
           key: go-{{ .Branch }}-{{ .Revision }}-{{ epoch }}
